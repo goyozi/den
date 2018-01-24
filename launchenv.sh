@@ -19,7 +19,7 @@ launch() {
     toPush=$2
 
     sudo docker pull $toRun
-    x11docker --desktop --gpu --ps $toRun start
+    x11docker --sudouser --desktop --gpu --ps $toRun start
   
     image=$(sudo docker ps -a -q --filter=ancestor=$toRun)
   
