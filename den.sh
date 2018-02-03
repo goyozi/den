@@ -3,7 +3,7 @@
 set -e
 
 install() {
-    if [ -f "/usr/bin/launchenv" ]; then
+    if [ -f "/usr/bin/den" ]; then
         echo "Already installed."
         exit
     fi
@@ -11,7 +11,7 @@ install() {
     echo "Installing..."
     dirPart="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     scriptPart="$(basename $0)"
-    sudo ln -s "$dirPart/$scriptPart" /usr/bin/launchenv
+    sudo ln -s "$dirPart/$scriptPart" /usr/bin/den
 }
 
 launch() {
