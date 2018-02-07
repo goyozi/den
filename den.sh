@@ -8,32 +8,52 @@ install() {
         exit
     fi
 
-    echo "Installing..."
-    dirPart="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    scriptPart="$(basename $0)"
-    sudo ln -s "$dirPart/$scriptPart" /usr/bin/den
+    if [ ! -f den.sh ]; then
+        echo "You must run the installation from den's source directory."
+        exit 1
+    fi
+
+    dirPart="$(pwd)"
+    ln -s "$dirPart/den.sh" /usr/bin/den
+
+    echo "Installed."
 }
 
 launch() {
     toRun=$1
     toPush=$2
 
-    sudo docker pull $toRun
-    x11docker --sudouser --desktop --gpu --ps $toRun start
+    mkdir -p /tmp/den
+
+    docker pull $toRun
+    
+    echo "
+        xhost +local:
+        docker run -e DISPLAY=\$DISPLAY \\
+                   -v /tmp/.X11-unix:/tmp/.X11-unix:rw \\
+                   $DOCKER_OPTS \\
+                   $toRun > /tmp/den/container.log
+    " > /tmp/den/xinitrc
+
+    startx /tmp/den/xinitrc
+      
+    image=$(docker ps -a -q --filter=ancestor=$toRun)
   
-    image=$(sudo docker ps -a -q --filter=ancestor=$toRun)
-  
-    sudo docker commit $image $toPush
-    sudo docker push $toPush
-    sudo docker rm $image
+    docker commit $image $toPush
+    docker push $toPush
+    docker rm $image
 }
 
 if [ "$1"  == "install" ]; then
     install
+elif [ "$1"  == "remove" ]; then
+    rm /usr/bin/den
 elif [ "$1"  == "init" ]; then
-    echo "Initializing environment..."
+    echo "Initializing environment $3 using $2..."
     launch $2 $3
+elif [ "$1"  == "start" ]; then
+    echo "Starting environment $2..."
+    launch $2 $2
 else
-    echo "Starting environment..."
-    launch $1 $1
+    echo "You must specify a command."
 fi
