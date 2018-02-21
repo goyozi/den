@@ -37,7 +37,7 @@ environment variable e.g.
 export DOCKER_OPTS="--device /dev/snd"
 ```
 
-**Please note that you must not change the container name via `DOCKER_OPTS`. Otherwise den will not work properly.
+**Please note that you must not change the container name via `DOCKER_OPTS`. Otherwise den will not work properly.**
 
 ## Uninstallation
 
