@@ -11,7 +11,7 @@ in a fresh X session and pushes the updated container to registry once the sessi
 git clone https://github.com/terrifish/den.git
 cd den/
 chmod +x den.sh
-./den.sh install
+sudo ./den.sh install
 ```
 
 ## Basic Usage
@@ -19,13 +19,13 @@ chmod +x den.sh
 Creating a new environment:
 
 ```
-den init {{ base image name }} {{ environment image name }}
+sudo den init {{ base image name }} {{ environment image name }}
 ```
 
 Starting an existing environment:
 
 ```
-den start {{ environment image name }}
+sudo den start {{ environment image name }}
 ```
 
 ## Configuration
@@ -42,6 +42,6 @@ export DOCKER_OPTS="--device /dev/snd"
 ## Uninstallation
 
 ```
-den remove
+sudo den remove
 rm -r {{ den sources directory }}
 ```
