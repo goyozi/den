@@ -33,7 +33,7 @@ launch() {
     toRun=$1
     toPush=$2
 
-    containerName=den_$(echo "$toRun" | tr / _)
+    containerName=den_$(echo "$toPush" | tr / _)
 
     container=$(docker ps -a -q --filter=name=$containerName)
 
