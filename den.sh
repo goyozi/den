@@ -56,10 +56,14 @@ You need to commit and push your progress (if needed) and remove the container m
                    -e DISPLAY=\$DISPLAY \\
                    -v /tmp/.X11-unix:/tmp/.X11-unix:rw \\
                    $DOCKER_OPTS \\
-                   $toRun > /tmp/den/container.log
+                   $toRun > /tmp/den/container.log 2>&1
     " > /tmp/den/xinitrc
 
-    startx /tmp/den/xinitrc
+    export XAUTHORITY=/tmp/den/Xauthority
+    
+    STARTX_OPTS=${STARTX_OPTS:="-- :1 vt8"}
+
+    startx /tmp/den/xinitrc $STARTX_OPTS
   
     docker commit $containerName $toPush
     docker push $toPush
