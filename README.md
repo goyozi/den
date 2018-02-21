@@ -19,14 +19,16 @@ sudo ./den.sh install
 Creating a new environment:
 
 ```
-sudo den init {{ base image name }} {{ environment image name }}
+den init {{ base image name }} {{ environment image name }}
 ```
 
 Starting an existing environment:
 
 ```
-sudo den start {{ environment image name }}
+den start {{ environment image name }}
 ```
+
+If your user is not in the docker group, you might need to add `sudo` before all the commands.
 
 ## Configuration
 
