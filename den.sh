@@ -29,6 +29,20 @@ remove() {
     printf "\033[0;32mRemoved.\033[0m\n"
 }
 
+set_linux_defaults() {
+    STARTX_OPTS=${STARTX_OPTS:="-- :1 vt8"}
+    XHOST_OPTS=${XHOST_OPTS:="+local:"}
+    DISPLAY=${DISPLAY:="\$DISPLAY"}
+}
+
+set_cygwin_defaults() {
+    STARTX_OPTS=${STARTX_OPTS:="-- :0 -listen tcp -fullscreen -keyhook"}
+    DETECTED_LOCAL_IP=$(getent ahostsv4 $(hostname) | awk '{ print $1 }' | head -1)
+    LOCAL_IP=${LOCAL_IP:=$DETECTED_LOCAL_IP}
+    XHOST_OPTS=${XHOST_OPTS:="+ $LOCAL_IP"}
+    DISPLAY=${DISPLAY:="$LOCAL_IP:0"}
+}
+
 launch() {
     toRun=$1
     toPush=$2
@@ -49,19 +63,27 @@ You need to commit and push your progress (if needed) and remove the container m
     mkdir -p /tmp/den
 
     docker pull $toRun
-    
+
+    unameOut="$(uname -s)"
+    case "${unameOut}" in
+        CYGWIN*)    set_cygwin_defaults;;
+        *)          set_linux_defaults
+    esac
+
+    echo "STARTX_OPTS: $STARTX_OPTS"
+    echo "XHOST_OPTS: $XHOST_OPTS"
+    echo "DISPLAY: $DISPLAY"
+
     echo "
-        xhost +local:
+        xhost $XHOST_OPTS
         docker run --name $containerName \\
-                   -e DISPLAY=\$DISPLAY \\
+                   -e DISPLAY=$DISPLAY \\
                    -v /tmp/.X11-unix:/tmp/.X11-unix:rw \\
                    $DOCKER_OPTS \\
                    $toRun > /tmp/den/container.log 2>&1
     " > /tmp/den/xinitrc
 
     export XAUTHORITY=/tmp/den/Xauthority
-    
-    STARTX_OPTS=${STARTX_OPTS:="-- :1 vt8"}
 
     startx /tmp/den/xinitrc $STARTX_OPTS
   
