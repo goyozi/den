@@ -88,8 +88,12 @@ You need to commit and push your progress (if needed) and remove the container m
 
     startx /tmp/den/xinitrc $STARTX_OPTS
   
+    now=$(date +"%Y.%m.%d_%H.%M.%S")
+
     docker commit $containerName $toPush
+    docker tag $toPush $toPush:$now
     docker push $toPush
+    docker push $toPush:$now
     docker rm $containerName
 }
 
