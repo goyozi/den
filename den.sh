@@ -37,7 +37,8 @@ set_linux_defaults() {
 
 set_cygwin_defaults() {
     STARTX_OPTS=${STARTX_OPTS:="-- :0 -listen tcp -fullscreen -keyhook"}
-    DETECTED_LOCAL_IP=$(getent ahostsv4 $(hostname) | awk '{ print $1 }' | head -1)
+    # lowest network and host give a pretty good chance of having the right IP
+    DETECTED_LOCAL_IP=$(getent ahostsv4 $(hostname) | awk '{ print $1 }' | sort -t. -nk3 | head -1)
     LOCAL_IP=${LOCAL_IP:=$DETECTED_LOCAL_IP}
     XHOST_OPTS=${XHOST_OPTS:="+ $LOCAL_IP"}
     DISPLAY=${DISPLAY:="$LOCAL_IP:0"}
